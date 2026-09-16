@@ -54,12 +54,14 @@
             <nav class="hidden md:flex items-center gap-1">
               <%= link_to "Каталог продукції", products_path, class: "px-4 py-2 text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded transition" %>
               <%= link_to "Калькулятор вартості", configurator_path, class: "px-4 py-2 text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50/80 border border-amber-200 hover:bg-amber-100 transition rounded" %>
-              <%= link_to cart_path, class: "flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-zinc-800 border-2 border-zinc-200 hover:border-zinc-900 transition" do %>
-                <span>Кошик</span>
-                <span class="w-5 h-5 bg-zinc-900 text-white rounded-full flex items-center justify-center text-[10px] font-mono-num">
-                  <%= current_cart.total_items_count %>
-                </span>
-              <% end %>
+              <% unless user_signed_in? && current_user.admin? %>
+  <%= link_to cart_path, class: "flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-zinc-800 border-2 border-zinc-200 hover:border-zinc-900 transition" do %>
+    <span>Кошик</span>
+    <span class="w-5 h-5 bg-zinc-900 text-white rounded-full flex items-center justify-center text-[10px] font-mono-num">
+      <%= current_cart.total_items_count %>
+    </span>
+  <% end %>
+<% end %>
             </nav>
           </div>
 
@@ -72,8 +74,11 @@
               </div>
 
               <% if current_user.admin? %>
-                <%= link_to "Панель керування", admin_products_path, class: "text-xs font-bold uppercase tracking-wider bg-zinc-900 text-white px-3 py-2 rounded hover:bg-zinc-800 transition" %>
-              <% end %>
+  <div class="flex items-center gap-2">
+    <%= link_to "Товари", admin_products_path, class: "text-xs font-bold uppercase tracking-wider bg-zinc-800 text-zinc-200 px-2.5 py-1.5 hover:bg-zinc-700 transition" %>
+    <%= link_to "Замовлення", admin_orders_path, class: "text-xs font-bold uppercase tracking-wider bg-amber-600 text-white px-2.5 py-1.5 hover:bg-amber-500 transition" %>
+  </div>
+<% end %>
 
               <%= button_to "Вихід", destroy_user_session_path, method: :delete, class: "text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-red-600 border border-zinc-200 hover:border-red-200 px-3 py-2 rounded transition cursor-pointer" %>
             <% else %>

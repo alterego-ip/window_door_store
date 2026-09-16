@@ -1,4 +1,59 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::Products#index</h1>
-  <p>Find me in app/views/admin/products/index.html.erb</p>
+<div class="max-w-6xl mx-auto space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-zinc-200 pb-4 gap-2">
+    <div>
+      <span class="text-xs font-bold uppercase tracking-widest text-amber-600">Адміністрування</span>
+      <h1 class="text-2xl sm:text-3xl font-black text-zinc-900 uppercase tracking-tight">Каталог продукції</h1>
+    </div>
+    <div>
+      <%= link_to "+ Додати товар", new_admin_product_path, class: "bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold uppercase tracking-widest px-4 py-2.5 transition" %>
+    </div>
+  </div>
+
+  <% if @products.any? %>
+    <div class="bg-white border-2 border-zinc-200 overflow-x-auto">
+      <table class="w-full text-left text-xs">
+        <thead class="bg-zinc-100 border-b border-zinc-200 text-zinc-600 font-bold uppercase font-mono-num">
+          <tr>
+            <th class="p-3">SKU / Зображення</th>
+            <th class="p-3">Найменування</th>
+            <th class="p-3">Категорія</th>
+            <th class="p-3 text-right">Ціна</th>
+            <th class="p-3 text-center">Склад</th>
+            <th class="p-3 text-right">Дії</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-zinc-200 font-mono-num">
+          <% @products.each do |product| %>
+            <tr class="hover:bg-zinc-50 transition">
+              <td class="p-3 flex items-center gap-3">
+                <div class="w-10 h-10 bg-zinc-100 border border-zinc-200 flex items-center justify-center shrink-0">
+                  <% if product.image.attached? %>
+                    <%= image_tag product.image, class: "w-full h-full object-contain" %>
+                  <% else %>
+                    <span class="text-[9px] text-zinc-400">Н/Д</span>
+                  <% end %>
+                </div>
+                <span class="font-bold text-zinc-900"><%= product.sku %></span>
+              </td>
+              <td class="p-3 font-sans font-medium text-zinc-900"><%= product.name %></td>
+              <td class="p-3"><%= product.category&.name || "Без категорії" %></td>
+              <td class="p-3 text-right font-black text-zinc-900"><%= number_to_currency(product.price, unit: "грн", format: "%n %u") %></td>
+              <td class="p-3 text-center <%= product.stock > 0 ? 'text-emerald-700 font-bold' : 'text-rose-600' %>">
+                <%= product.stock %> шт.
+              </td>
+<td class="p-3 text-right space-x-3 whitespace-nowrap">
+                <%= link_to "Редагувати", edit_admin_product_path(product), class: "text-zinc-700 hover:text-zinc-950 font-bold uppercase text-[10px] underline" %>
+                <%= button_to "Видалити", admin_product_path(product), method: :delete, form: { data: { turbo_confirm: "Ви дійсно бажаєте видалити позицію #{product.sku}?" } }, class: "inline text-rose-600 hover:text-rose-800 font-bold uppercase text-[10px] underline cursor-pointer bg-transparent border-0 p-0" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <div class="bg-white border-2 border-zinc-200 p-12 text-center space-y-4">
+      <p class="text-xs font-bold uppercase tracking-wider text-zinc-500">У каталозі поки немає жодного товару</p>
+      <%= link_to "Створити перший товар", new_admin_product_path, class: "inline-block bg-zinc-900 text-white text-xs font-bold uppercase tracking-widest px-4 py-2 hover:bg-zinc-800 transition" %>
+    </div>
+  <% end %>
 </div>

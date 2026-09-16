@@ -1,0 +1,109 @@
+<div class="max-w-5xl mx-auto space-y-6">
+  <div class="flex items-center justify-between text-xs font-mono-num">
+    <%= link_to "← До списку замовлень", admin_orders_path, class: "font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-900" %>
+    <span class="text-zinc-400">ID: <%= @order.id %></span>
+  </div>
+
+  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <!-- Специфікація замовлення -->
+    <div class="lg:col-span-2 bg-white border-2 border-zinc-200 p-6 space-y-6">
+      <div class="border-b border-zinc-200 pb-4 flex justify-between items-start">
+        <div>
+          <span class="text-[10px] font-bold uppercase tracking-widest text-amber-600">Специфікація</span>
+          <h1 class="text-2xl font-black uppercase tracking-tight text-zinc-900 font-mono-num">
+            Замовлення #<%= @order.id.to_s.rjust(6, '0') %>
+          </h1>
+          <span class="text-xs text-zinc-400 font-mono-num"><%= @order.created_at.strftime("%d.%m.%Y о %H:%M") %></span>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
+        <div>
+          <span class="text-zinc-400 uppercase font-bold block mb-1">Замовник:</span>
+          <span class="text-zinc-900 font-bold block"><%= @order.full_name %></span>
+          <span class="text-zinc-500 font-mono-num"><%= @order.email %></span>
+        </div>
+        <div>
+          <span class="text-zinc-400 uppercase font-bold block mb-1">Адреса об'єкта:</span>
+          <span class="text-zinc-900 font-bold block"><%= @order.delivery_address %></span>
+          <span class="text-zinc-500 font-mono-num">Метод розрахунку: <%= @order.payment_method %></span>
+        </div>
+      </div>
+
+      <% if @order.notes.present? %>
+        <div class="bg-zinc-50 border border-zinc-200 p-3 text-xs">
+          <span class="text-zinc-400 uppercase font-bold block mb-1">Примітки клієнта:</span>
+          <p class="text-zinc-700"><%= @order.notes %></p>
+        </div>
+      <% end %>
+
+      <div>
+        <h3 class="text-xs font-bold uppercase tracking-widest text-zinc-900 mb-3">Вироби до виконання</h3>
+        <div class="border-2 border-zinc-200 overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="bg-zinc-100 border-b border-zinc-200 text-zinc-600 font-bold uppercase font-mono-num">
+              <tr>
+                <th class="p-2.5">Найменування</th>
+                <th class="p-2.5 text-center">К-сть</th>
+                <th class="p-2.5 text-right">Ціна</th>
+                <th class="p-2.5 text-right">Сума</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-zinc-200 font-mono-num">
+              <% @order.order_items.each do |item| %>
+                <tr>
+                  <td class="p-2.5 font-sans font-medium text-zinc-900">
+                    <%= item.item_title %>
+                    <% if item.custom_configuration %>
+                      <span class="block text-[11px] text-zinc-500 font-mono-num">
+                        Профіль: <%= item.custom_configuration.profile_system.upcase %>, Скло: <%= item.custom_configuration.glass_type %>, Монтаж: <%= item.custom_configuration.with_installation ? 'Так' : 'Ні' %>
+                      </span>
+                    <% end %>
+                  </td>
+                  <td class="p-2.5 text-center font-bold"><%= item.quantity %></td>
+                  <td class="p-2.5 text-right"><%= number_to_currency(item.unit_price, unit: "грн", format: "%n %u") %></td>
+                  <td class="p-2.5 text-right font-black text-zinc-900"><%= number_to_currency(item.total_price, unit: "грн", format: "%n %u") %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-2">
+        <div class="text-right">
+          <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-400 block mb-1">Сума з ПДВ:</span>
+          <div class="text-2xl font-black font-mono-num text-zinc-900">
+            <%= number_to_currency(@order.total_price, unit: "грн", format: "%n %u") %>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Керування статусом -->
+    <div class="bg-zinc-900 text-white p-6 border-t-4 border-amber-500 space-y-6 h-fit">
+      <div>
+        <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-400 block mb-1">Керування процесом</span>
+        <h3 class="text-sm font-bold uppercase tracking-wider text-zinc-200 pb-3 border-b border-zinc-800">
+          Зміна статусу замовлення
+        </h3>
+      </div>
+
+      <div class="space-y-2 text-xs">
+        <span class="text-zinc-400 block">Поточний стан:</span>
+        <div class="font-mono-num font-bold text-amber-400 text-lg uppercase tracking-wider">
+          <%= @order.status %>
+        </div>
+      </div>
+
+      <%= form_with model: [:admin, @order], method: :patch, class: "space-y-4" do |f| %>
+        <div>
+          <%= f.label :status, "Новий статус", class: "block text-[11px] font-bold uppercase tracking-wider text-zinc-300 mb-1" %>
+          <%= f.select :status, Order.statuses.keys.map { |k| [k.upcase, k] }, {}, class: "w-full bg-zinc-800 border border-zinc-700 text-white font-mono-num text-xs p-2.5 focus:border-amber-500 focus:outline-none" %>
+        </div>
+
+        <%= f.submit "Оновити статус", class: "w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest py-3 transition cursor-pointer" %>
+      <% end %>
+    </div>
+  </div>
+</div>

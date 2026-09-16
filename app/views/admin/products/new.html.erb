@@ -1,4 +1,10 @@
-<div>
-  <h1 class="font-bold text-4xl">Admin::Products#new</h1>
-  <p>Find me in app/views/admin/products/new.html.erb</p>
+<div class="max-w-3xl mx-auto space-y-6">
+  <div class="border-b border-zinc-200 pb-4">
+    <span class="text-xs font-bold uppercase tracking-widest text-amber-600">Номенклатура</span>
+    <h1 class="text-2xl font-black uppercase tracking-tight text-zinc-900">Створення нової позиції</h1>
+  </div>
+
+  <div class="bg-white border-2 border-zinc-200 p-6 sm:p-8">
+    <%= render "form", product: @product %>
+  </div>
 </div>
