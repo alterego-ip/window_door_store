@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2026_09_16_134852) do
+ActiveRecord::Schema[7.2].define(version: 2026_09_16_135725) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -46,6 +46,20 @@ ActiveRecord::Schema[7.2].define(version: 2026_09_16_134852) do
     t.string "name"
     t.string "slug"
     t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "custom_configurations", force: :cascade do |t|
+    t.string "product_type", default: "window", null: false
+    t.integer "width", null: false
+    t.integer "height", null: false
+    t.string "profile_system", null: false
+    t.string "glass_type", null: false
+    t.string "hardware", null: false
+    t.boolean "with_installation", default: false, null: false
+    t.decimal "calculated_price", precision: 10, scale: 2, default: "0.0", null: false
+    t.jsonb "configuration_data"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

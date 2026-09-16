@@ -1,74 +1,86 @@
-<div class="container mx-auto px-4 py-8">
-  <div class="flex flex-col md:flex-row gap-8">
-    <!-- Бокова панель фільтрів -->
-    <aside class="w-full md:w-1/4 bg-white p-6 rounded-xl border border-gray-200 shadow-sm h-fit">
-      <h3 class="text-lg font-bold text-gray-800 mb-4">Фільтр товарів</h3>
-      <%= form_with url: products_path, method: :get, local: true, class: "space-y-4" do |f| %>
-        <div>
-          <%= f.label :query, "Пошук", class: "block text-sm font-medium text-gray-700 mb-1" %>
-          <%= f.text_field :query, value: params[:query], placeholder: "Назва товару...", class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" %>
+<div class="flex flex-col lg:flex-row gap-8 items-start">
+  <!-- Бокова панель параметрів та фільтрів -->
+  <aside class="w-full lg:w-72 bg-white border-2 border-zinc-200 p-5 shrink-0">
+    <div class="border-b border-zinc-200 pb-3 mb-4">
+      <h3 class="text-xs font-black uppercase tracking-widest text-zinc-900">Номенклатурний фільтр</h3>
+    </div>
+
+    <%= form_with url: products_path, method: :get, local: true, class: "space-y-4" do |f| %>
+      <div>
+        <%= f.label :query, "Пошук по назві", class: "block text-[11px] font-bold uppercase tracking-wider text-zinc-600 mb-1" %>
+        <%= f.text_field :query, value: params[:query], placeholder: "Введіть маркування...", class: "w-full border border-zinc-300 focus:border-zinc-900 px-3 py-1.5 text-xs text-zinc-900 focus:outline-none" %>
+      </div>
+
+      <div>
+        <%= f.label :category_id, "Категорія", class: "block text-[11px] font-bold uppercase tracking-wider text-zinc-600 mb-1" %>
+        <%= f.select :category_id, options_from_collection_for_select(@categories, :id, :name, params[:category_id]), { include_blank: "Всі категорії" }, class: "w-full border border-zinc-300 focus:border-zinc-900 px-2 py-1.5 text-xs bg-white focus:outline-none" %>
+      </div>
+
+      <div>
+        <label class="block text-[11px] font-bold uppercase tracking-wider text-zinc-600 mb-1">Діапазон цін (грн)</label>
+        <div class="grid grid-cols-2 gap-2">
+          <%= f.number_field :min_price, value: params[:min_price], placeholder: "Від", class: "w-full border border-zinc-300 px-2 py-1.5 text-xs font-mono-num" %>
+          <%= f.number_field :max_price, value: params[:max_price], placeholder: "До", class: "w-full border border-zinc-300 px-2 py-1.5 text-xs font-mono-num" %>
         </div>
+      </div>
 
-        <div>
-          <%= f.label :category_id, "Категорія", class: "block text-sm font-medium text-gray-700 mb-1" %>
-          <%= f.select :category_id, options_from_collection_for_select(@categories, :id, :name, params[:category_id]), { include_blank: "Усі категорії" }, class: "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-blue-500 focus:border-blue-500" %>
-        </div>
+      <div class="pt-2 flex flex-col gap-2">
+        <%= f.submit "Застосувати фільтр", class: "w-full bg-zinc-900 hover:bg-zinc-800 text-white text-[11px] font-bold uppercase tracking-wider py-2.5 transition cursor-pointer" %>
+        <%= link_to "Скинути фільтр", products_path, class: "text-center text-[11px] text-zinc-500 hover:text-zinc-900 underline" %>
+      </div>
+    <% end %>
+  </aside>
 
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">Ціна (грн)</label>
-          <div class="grid grid-cols-2 gap-2">
-            <%= f.number_field :min_price, value: params[:min_price], placeholder: "Від", class: "w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm" %>
-            <%= f.number_field :max_price, value: params[:max_price], placeholder: "До", class: "w-full border border-gray-300 rounded-lg px-2 py-1.5 text-sm" %>
-          </div>
-        </div>
+  <!-- Сітка позицій каталогу -->
+  <div class="flex-1 w-full">
+    <div class="flex justify-between items-center mb-6 pb-2 border-b border-zinc-200">
+      <h1 class="text-xl font-black uppercase tracking-tight text-zinc-900">Готові вироби та комплектуючі</h1>
+      <span class="text-xs text-zinc-500 font-mono-num">Знайдено: <%= @products.count %> од.</span>
+    </div>
 
-        <div class="pt-2">
-          <%= f.submit "Застосувати", class: "w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 rounded-lg text-sm transition cursor-pointer" %>
-          <%= link_to "Скинути", products_path, class: "block text-center text-xs text-gray-500 hover:underline mt-2" %>
-        </div>
-      <% end %>
-    </aside>
-
-    <!-- Список товарів -->
-    <main class="w-full md:w-3/4">
-      <h1 class="text-2xl font-bold text-gray-800 mb-6">Каталог вікон та дверей</h1>
-
-      <% if @products.any? %>
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          <% @products.each do |product| %>
-            <div class="bg-white border border-gray-200 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition flex flex-col justify-between">
-              <div>
+    <% if @products.any? %>
+      <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+        <% @products.each do |product| %>
+          <div class="bg-white border-2 border-zinc-200 hover:border-zinc-900 transition flex flex-col justify-between">
+            <div>
+              <div class="h-44 bg-zinc-100 border-b border-zinc-200 flex items-center justify-center p-4">
                 <% if product.image.attached? %>
-                  <%= image_tag product.image, class: "w-full h-48 object-cover" %>
+                  <%= image_tag product.image, class: "w-full h-full object-contain" %>
                 <% else %>
-                  <div class="w-full h-48 bg-gray-100 flex items-center justify-center text-gray-400">
-                    <span>Немає фото</span>
+                  <div class="text-center text-zinc-400">
+                    <span class="text-[11px] font-mono-num tracking-wider">[ ЗОБРАЖЕННЯ ВІДСУТНЄ ]</span>
                   </div>
                 <% end %>
-                <div class="p-4">
-                  <span class="text-xs font-semibold text-blue-600 uppercase tracking-wide"><%= product.category.name %></span>
-                  <h2 class="text-lg font-bold text-gray-900 mt-1"><%= product.name %></h2>
-                  <p class="text-sm text-gray-500 mt-1">Артикул: <%= product.sku %></p>
-                </div>
               </div>
 
-              <div class="p-4 pt-0">
-                <div class="flex items-center justify-between mt-4">
-                  <span class="text-xl font-extrabold text-gray-900"><%= number_to_currency(product.price, unit: "грн", format: "%n %u") %></span>
-                  <span class="text-xs px-2 py-1 rounded <%= product.stock > 0 ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800' %>">
-                    <%= product.stock > 0 ? "В наявності (#{product.stock})" : "Під замовлення" %>
-                  </span>
+              <div class="p-4">
+                <div class="flex justify-between items-start gap-2 mb-1">
+                  <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-1.5 py-0.5"><%= product.category.name %></span>
+                  <span class="text-[11px] font-mono-num text-zinc-400">SKU: <%= product.sku %></span>
                 </div>
-                <%= link_to "Детальніше", product_path(product), class: "mt-4 block text-center w-full bg-gray-900 hover:bg-gray-800 text-white font-medium py-2 rounded-lg text-sm transition" %>
+                <h3 class="font-bold text-zinc-900 text-sm mt-2 leading-snug"><%= product.name %></h3>
+                <p class="text-xs text-zinc-500 mt-2 line-clamp-2"><%= product.description %></p>
               </div>
             </div>
-          <% end %>
-        </div>
-      <% else %>
-        <div class="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center text-gray-500">
-          Товарів за вказаними фільтрами не знайдено.
-        </div>
-      <% end %>
-    </main>
+
+            <div class="p-4 pt-0 border-t border-zinc-100 mt-4">
+              <div class="flex items-baseline justify-between pt-3">
+                <span class="text-lg font-black font-mono-num text-zinc-900">
+                  <%= number_to_currency(product.price, unit: "грн", format: "%n %u") %>
+                </span>
+                <span class="text-[11px] font-mono-num <%= product.stock > 0 ? 'text-emerald-700' : 'text-rose-600' %>">
+                  <%= product.stock > 0 ? "Склад: #{product.stock} шт." : "Під замовлення" %>
+                </span>
+              </div>
+              <%= link_to "Специфікація товару", product_path(product), class: "mt-3 block text-center w-full border border-zinc-900 text-zinc-900 hover:bg-zinc-900 hover:text-white text-xs font-bold uppercase tracking-wider py-2 transition" %>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="bg-white border-2 border-zinc-200 p-8 text-center text-zinc-500 text-sm">
+        За вашим запитом номенклатури не знайдено.
+      </div>
+    <% end %>
   </div>
 </div>

@@ -1,26 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="uk" class="h-full bg-zinc-100/60">
   <head>
-    <title><%= content_for(:title) || "Window Door Store" %></title>
+    <title>ПРОФІЛЬ-СИСТЕМИ | Вікна та двері</title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <%= yield :head %>
-
-    <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/icon.png" type="image/png">
-    <link rel="icon" href="/icon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/icon.png">
     <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+      body { font-family: 'Plus Jakarta Sans', sans-serif; }
+      .font-mono-num { font-family: 'Space Grotesk', monospace; font-feature-settings: "tnum"; }
+    </style>
   </head>
 
-  <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+  <body class="min-h-full flex flex-col text-zinc-800 antialiased selection:bg-amber-500 selection:text-white">
+    <!-- Верхня тонка панель контактів / статусу -->
+    <div class="bg-zinc-900 text-zinc-400 text-xs tracking-wider border-b border-zinc-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex justify-between items-center">
+        <div class="flex items-center gap-6">
+          <span class="flex items-center gap-1.5">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
+            Виробництво та сервіс працюють штатно
+          </span>
+          <span class="hidden md:inline text-zinc-500">|</span>
+          <span class="hidden md:inline">Сертифіковані профільні системи (ДСТУ EN 12608)</span>
+        </div>
+        <div class="flex items-center gap-4 text-zinc-300">
+          <span class="font-mono-num">Пн–Сб: 08:30 – 19:00</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Основний Header -->
+    <header class="bg-white border-b border-zinc-200 sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="h-18 flex items-center justify-between py-3">
+          <!-- Логотип: інженерний, строгий -->
+          <div class="flex items-center gap-10">
+            <%= link_to root_path, class: "flex items-center gap-3 group" do %>
+              <div class="w-10 h-10 bg-zinc-900 flex items-center justify-center text-white font-black text-xl tracking-tighter border-2 border-zinc-900 group-hover:bg-amber-600 group-hover:border-amber-600 transition-colors">
+                ПС
+              </div>
+              <div class="flex flex-col">
+                <span class="text-base font-extrabold tracking-tight uppercase text-zinc-900 leading-none">Профіль·Системи</span>
+                <span class="text-[10px] uppercase font-semibold tracking-widest text-zinc-400 mt-1">Виробничо-монтажний комбінат</span>
+              </div>
+            <% end %>
+
+            <!-- Навігація з індикаторами-табами -->
+            <nav class="hidden md:flex items-center gap-1">
+              <%= link_to "Каталог продукції", products_path, class: "px-4 py-2 text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded transition" %>
+              <%= link_to "Калькулятор вартості", configurator_path, class: "px-4 py-2 text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50/80 border border-amber-200 hover:bg-amber-100 transition rounded" %>
+            </nav>
+          </div>
+
+          <!-- Авторизація та користувач -->
+          <div class="flex items-center gap-3">
+            <% if user_signed_in? %>
+              <div class="text-right hidden sm:block mr-2">
+                <span class="text-xs text-zinc-400 block leading-tight">Авторизовано як</span>
+                <span class="text-sm font-bold text-zinc-800"><%= current_user.first_name %> <%= current_user.last_name %></span>
+              </div>
+
+              <% if current_user.admin? %>
+                <%= link_to "Панель керування", admin_products_path, class: "text-xs font-bold uppercase tracking-wider bg-zinc-900 text-white px-3 py-2 rounded hover:bg-zinc-800 transition" %>
+              <% end %>
+
+              <%= button_to "Вихід", destroy_user_session_path, method: :delete, class: "text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-red-600 border border-zinc-200 hover:border-red-200 px-3 py-2 rounded transition cursor-pointer" %>
+            <% else %>
+              <%= link_to "Вхід", new_user_session_path, class: "text-xs font-bold uppercase tracking-wider text-zinc-700 hover:text-zinc-950 px-4 py-2 hover:bg-zinc-100 rounded transition" %>
+              <%= link_to "Реєстрація", new_user_registration_path, class: "text-xs font-bold uppercase tracking-wider bg-zinc-900 text-white hover:bg-zinc-800 px-4 py-2.5 rounded transition shadow-sm" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Сповіщення Flash -->
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-4">
+      <% if notice.present? %>
+        <div class="flex items-center justify-between p-3.5 bg-emerald-50 border-l-4 border-emerald-600 text-emerald-900 text-sm">
+          <span><%= notice %></span>
+        </div>
+      <% end %>
+
+      <% if alert.present? %>
+        <div class="flex items-center justify-between p-3.5 bg-rose-50 border-l-4 border-rose-600 text-rose-900 text-sm">
+          <span><%= alert %></span>
+        </div>
+      <% end %>
+    </div>
+
+    <!-- Контентна область -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <%= yield %>
     </main>
+
+    <!-- Футер -->
+    <footer class="bg-zinc-900 text-zinc-400 border-t border-zinc-800 py-10 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
+        <div class="flex items-center gap-3 text-zinc-300">
+          <span class="w-6 h-6 bg-zinc-800 flex items-center justify-center font-bold text-amber-500">ПС</span>
+          <span class="font-bold tracking-tight">ІНТЕРНЕТ-МАГАЗИН ВІКОН ТА ДВЕРЕЙ</span>
+        </div>
+        <p class="text-zinc-500">Автоматизована платформа індивідуального конфігурування та продажу. 2026</p>
+      </div>
+    </footer>
   </body>
 </html>
