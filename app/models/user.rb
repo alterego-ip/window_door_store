@@ -7,6 +7,7 @@ class User < ApplicationRecord
   validates :first_name, :last_name, presence: true
 
   has_many :carts, dependent: :nullify
+  has_many :orders, dependent: :nullify
 
   def full_name
     "#{first_name} #{last_name}".strip
