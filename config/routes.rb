@@ -5,6 +5,10 @@ Rails.application.routes.draw do
 
   resources :products, only: [:index, :show]
 
+  resource :configurator, only: [:show, :create] do
+    post :calculate, on: :collection
+  end
+
   namespace :admin do
     resources :products
   end
