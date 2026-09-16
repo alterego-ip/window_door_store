@@ -17,48 +17,43 @@
   </head>
 
   <body class="min-h-full flex flex-col text-zinc-800 antialiased selection:bg-amber-500 selection:text-white">
-    <!-- Верхній технічний рядок -->
-    <div class="bg-zinc-900 text-zinc-400 text-xs tracking-wider border-b border-zinc-800">
+    <!-- Технічний рядок -->
+    <div class="bg-zinc-900 text-zinc-400 text-[11px] sm:text-xs tracking-wider border-b border-zinc-800">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2 flex justify-between items-center">
-        <div class="flex items-center gap-6">
-          <span class="flex items-center gap-1.5">
-            <span class="w-2 h-2 rounded-full bg-emerald-500 inline-block animate-pulse"></span>
-            Виробництво та сервіс працюють штатно
-          </span>
-          <span class="hidden md:inline text-zinc-500">|</span>
-          <span class="hidden md:inline">Сертифіковані профільні системи (ДСТУ EN 12608)</span>
+        <div class="flex items-center gap-2 truncate">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 shrink-0 animate-pulse"></span>
+          <span class="truncate">Виробництво працює штатно</span>
+          <span class="hidden md:inline text-zinc-600">|</span>
+          <span class="hidden md:inline truncate">ДСТУ EN 12608</span>
         </div>
-        <div class="flex items-center gap-4 text-zinc-300">
-          <span class="font-mono-num">Пн–Сб: 08:30 – 19:00</span>
-        </div>
+        <div class="font-mono-num text-zinc-300 shrink-0 text-[11px]">Пн–Сб: 08:30–19:00</div>
       </div>
     </div>
 
-    <!-- Головна панель навігації -->
+    <!-- Шапка сайту -->
     <header class="bg-white border-b border-zinc-200 sticky top-0 z-40">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="h-18 flex items-center justify-between py-3">
-          <!-- Логотип та основні розділи -->
-          <div class="flex items-center gap-8">
-            <%= link_to root_path, class: "flex items-center gap-3 group" do %>
-              <div class="w-10 h-10 bg-zinc-900 flex items-center justify-center text-white font-black text-xl tracking-tighter border-2 border-zinc-900 group-hover:bg-amber-600 group-hover:border-amber-600 transition-colors">
+        <div class="h-16 sm:h-18 flex items-center justify-between">
+          <!-- Логотип -->
+          <div class="flex items-center gap-4 sm:gap-8">
+            <%= link_to root_path, class: "flex items-center gap-2.5 group" do %>
+              <div class="w-9 h-9 sm:w-10 sm:h-10 bg-zinc-900 flex items-center justify-center text-white font-black text-lg sm:text-xl border-2 border-zinc-900 group-hover:bg-amber-600 group-hover:border-amber-600 transition-colors shrink-0">
                 ПС
               </div>
               <div class="flex flex-col">
-                <span class="text-base font-extrabold tracking-tight uppercase text-zinc-900 leading-none">Профіль·Системи</span>
-                <span class="text-[10px] uppercase font-semibold tracking-widest text-zinc-400 mt-1">Виробничо-монтажний комбінат</span>
+                <span class="text-sm sm:text-base font-extrabold tracking-tight uppercase text-zinc-900 leading-none">Профіль·Системи</span>
+                <span class="text-[9px] sm:text-[10px] uppercase font-semibold tracking-widest text-zinc-400 mt-0.5">Виробничий комбінат</span>
               </div>
             <% end %>
 
             <nav class="hidden md:flex items-center gap-1">
-              <%= link_to "Каталог продукції", products_path, class: "px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded transition" %>
-              <%= link_to "Калькулятор вартості", configurator_path, class: "px-3.5 py-2 text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50/80 border border-amber-200 hover:bg-amber-100 transition rounded" %>
+              <%= link_to "Каталог", products_path, class: "px-3 py-2 text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 transition" %>
+              <%= link_to "Калькулятор", configurator_path, class: "px-3 py-2 text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 hover:bg-amber-100 transition" %>
             </nav>
           </div>
 
-          <!-- Блок користувача / кошика / адмінки -->
-          <div class="flex items-center gap-3">
-            <!-- Кошик (доступний усім, окрім адміністратора) -->
+          <!-- Дії справа (Десктоп) -->
+          <div class="hidden md:flex items-center gap-3">
             <% unless user_signed_in? && current_user.admin? %>
               <%= link_to cart_path, class: "flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-zinc-800 border-2 border-zinc-200 hover:border-zinc-900 transition" do %>
                 <span>Кошик</span>
@@ -69,63 +64,107 @@
             <% end %>
 
             <% if user_signed_in? %>
-              <!-- Посилання для клієнта -->
               <% unless current_user.admin? %>
-                <%= link_to "Мої замовлення", orders_path, class: "text-xs font-bold uppercase tracking-wider text-zinc-700 hover:text-zinc-900 border border-zinc-300 hover:border-zinc-900 px-3 py-2 transition" %>
+                <%= link_to "Мої замовлення", orders_path, class: "text-xs font-bold uppercase tracking-wider text-zinc-700 hover:text-zinc-900 border border-zinc-300 px-3 py-2 transition" %>
               <% end %>
 
-              <!-- Панель дій адміністратора -->
               <% if current_user.admin? %>
-                <div class="flex items-center gap-1">
-                  <%= link_to "Товари", admin_products_path, class: "text-xs font-bold uppercase tracking-wider bg-zinc-800 text-zinc-200 px-3 py-2 hover:bg-zinc-700 transition" %>
-                  <%= link_to "Замовлення", admin_orders_path, class: "text-xs font-bold uppercase tracking-wider bg-amber-600 text-white px-3 py-2 hover:bg-amber-500 transition" %>
-                </div>
+                <%= link_to "Товари", admin_products_path, class: "text-xs font-bold uppercase tracking-wider bg-zinc-800 text-zinc-200 px-3 py-2 hover:bg-zinc-700 transition" %>
+                <%= link_to "Замовлення", admin_orders_path, class: "text-xs font-bold uppercase tracking-wider bg-amber-600 text-white px-3 py-2 hover:bg-amber-500 transition" %>
               <% end %>
 
-              <div class="text-right hidden sm:block pl-1">
-                <span class="text-[10px] text-zinc-400 block uppercase leading-tight font-bold">Профіль</span>
-                <span class="text-xs font-bold text-zinc-900"><%= current_user.full_name %></span>
-              </div>
-
-              <%= button_to "Вихід", destroy_user_session_path, method: :delete, class: "text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-red-600 border border-zinc-200 hover:border-red-200 px-3 py-2 transition cursor-pointer" %>
+              <%= button_to "Вихід", destroy_user_session_path, method: :delete, class: "text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-rose-600 border border-zinc-200 px-3 py-2 transition cursor-pointer" %>
             <% else %>
-              <%= link_to "Вхід", new_user_session_path, class: "text-xs font-bold uppercase tracking-wider text-zinc-700 hover:text-zinc-950 px-3.5 py-2 hover:bg-zinc-100 transition" %>
-              <%= link_to "Реєстрація", new_user_registration_path, class: "text-xs font-bold uppercase tracking-wider bg-zinc-900 text-white hover:bg-zinc-800 px-4 py-2.5 transition shadow-sm" %>
+              <%= link_to "Вхід", new_user_session_path, class: "text-xs font-bold uppercase tracking-wider text-zinc-700 px-3 py-2 hover:bg-zinc-100 transition" %>
+              <%= link_to "Реєстрація", new_user_registration_path, class: "text-xs font-bold uppercase tracking-wider bg-zinc-900 text-white px-4 py-2 hover:bg-zinc-800 transition" %>
             <% end %>
           </div>
+
+          <!-- Мобільні кнопки: Кошик + Меню-бургер -->
+          <div class="flex md:hidden items-center gap-2">
+            <% unless user_signed_in? && current_user.admin? %>
+              <%= link_to cart_path, class: "p-2 border border-zinc-200 text-zinc-900 relative flex items-center justify-center" do %>
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+                <span class="absolute -top-1.5 -right-1.5 bg-zinc-900 text-white rounded-full text-[9px] w-4 h-4 flex items-center justify-center font-mono-num font-bold"><%= current_cart.total_items_count %></span>
+              <% end %>
+            <% end %>
+
+            <button type="button" id="mobile-menu-btn" class="p-2 border border-zinc-200 text-zinc-900 hover:bg-zinc-100 transition" aria-label="Меню">
+              <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Мобільна панель (dropdown) -->
+        <div id="mobile-nav" class="hidden md:hidden border-t border-zinc-200 py-3 space-y-2 bg-white">
+          <%= link_to "Каталог продукції", products_path, class: "block px-3 py-2 text-xs font-bold uppercase tracking-wider text-zinc-700 hover:bg-zinc-100" %>
+          <%= link_to "Онлайн-калькулятор", configurator_path, class: "block px-3 py-2 text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50" %>
+
+          <% if user_signed_in? %>
+            <% unless current_user.admin? %>
+              <%= link_to "Мої замовлення", orders_path, class: "block px-3 py-2 text-xs font-bold uppercase tracking-wider text-zinc-700 hover:bg-zinc-100" %>
+            <% end %>
+            <% if current_user.admin? %>
+              <%= link_to "Адмін: Товари", admin_products_path, class: "block px-3 py-2 text-xs font-bold uppercase tracking-wider text-zinc-700 hover:bg-zinc-100" %>
+              <%= link_to "Адмін: Замовлення", admin_orders_path, class: "block px-3 py-2 text-xs font-bold uppercase tracking-wider text-amber-600 hover:bg-zinc-100" %>
+            <% end %>
+            <div class="pt-2 border-t border-zinc-100 flex items-center justify-between px-3">
+              <span class="text-xs font-bold text-zinc-900 truncate"><%= current_user.full_name %></span>
+              <%= button_to "Вийти", destroy_user_session_path, method: :delete, class: "text-xs font-bold text-rose-600 uppercase" %>
+            </div>
+          <% else %>
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-zinc-100 px-2">
+              <%= link_to "Вхід", new_user_session_path, class: "text-center py-2 text-xs font-bold uppercase tracking-wider border border-zinc-300" %>
+              <%= link_to "Реєстрація", new_user_registration_path, class: "text-center py-2 text-xs font-bold uppercase tracking-wider bg-zinc-900 text-white" %>
+            </div>
+          <% end %>
         </div>
       </div>
     </header>
 
-    <!-- Системні сповіщення (Flash) -->
+    <!-- Flash повідомлення -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full mt-4">
       <% if notice.present? %>
-        <div class="flex items-center justify-between p-3.5 bg-emerald-50 border-l-4 border-emerald-600 text-emerald-900 text-xs font-medium tracking-wide">
-          <span><%= notice %></span>
+        <div class="p-3 bg-emerald-50 border-l-4 border-emerald-600 text-emerald-900 text-xs font-medium tracking-wide">
+          <%= notice %>
         </div>
       <% end %>
-
       <% if alert.present? %>
-        <div class="flex items-center justify-between p-3.5 bg-rose-50 border-l-4 border-rose-600 text-rose-900 text-xs font-medium tracking-wide">
-          <span><%= alert %></span>
+        <div class="p-3 bg-rose-50 border-l-4 border-rose-600 text-rose-900 text-xs font-medium tracking-wide">
+          <%= alert %>
         </div>
       <% end %>
     </div>
 
-    <!-- Основний контент -->
-    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Головна секція -->
+    <main class="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
       <%= yield %>
     </main>
 
     <!-- Футер -->
-    <footer class="bg-zinc-900 text-zinc-400 border-t border-zinc-800 py-10 mt-auto">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs">
-        <div class="flex items-center gap-3 text-zinc-300">
-          <span class="w-6 h-6 bg-zinc-800 flex items-center justify-center font-bold text-amber-500">ПС</span>
-          <span class="font-bold tracking-tight uppercase">Виробничий комплекс світлопрозорих огороджувальних конструкцій</span>
+    <footer class="bg-zinc-900 text-zinc-400 border-t border-zinc-800 py-8 mt-auto">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-center md:text-left">
+        <div class="flex items-center gap-2">
+          <span class="w-5 h-5 bg-zinc-800 flex items-center justify-center font-bold text-amber-500 text-[10px]">ПС</span>
+          <span class="font-bold tracking-tight uppercase">Профіль·Системи — виробничий комбінат</span>
         </div>
-        <p class="text-zinc-500 font-mono-num">Платформа індивідуального конфігурування та розрахунку замовлень. 2026</p>
+        <p class="text-zinc-500 font-mono-num text-[11px]">Платформа параметричного розрахунку. 2026</p>
       </div>
     </footer>
+
+    <script>
+      (function setupMobileMenu() {
+        function attach() {
+          const btn = document.getElementById('mobile-menu-btn');
+          const menu = document.getElementById('mobile-nav');
+          if (btn && menu) {
+            btn.onclick = () => menu.classList.toggle('hidden');
+          }
+        }
+        document.addEventListener("turbo:load", attach);
+        document.addEventListener("DOMContentLoaded", attach);
+        attach();
+      })();
+    </script>
   </body>
 </html>
