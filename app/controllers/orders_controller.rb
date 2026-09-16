@@ -1,4 +1,10 @@
 class OrdersController < ApplicationController
+  before_action :authenticate_user!, only: [:index]
+
+  def index
+    @orders = current_user.orders.order(created_at: :desc)
+  end
+
   def new
     @cart = current_cart
     if @cart.cart_items.empty?
@@ -35,13 +41,11 @@ class OrdersController < ApplicationController
           unit_price: cart_item.unit_price
         )
 
-        # Списання залишку зі складу (якщо товар складський)
         if cart_item.product.present?
           cart_item.product.decrement!(:stock, cart_item.quantity)
         end
       end
 
-      # Очищення кошика після оформлення
       @cart.cart_items.destroy_all
     end
 
@@ -52,6 +56,9 @@ class OrdersController < ApplicationController
 
   def show
     @order = Order.find(params[:id])
+    if @order.user.present? && @order.user != current_user && (!user_signed_in? || !current_user.admin?)
+      redirect_to root_path, alert: "Доступ до цієї специфікації обмежено."
+    end
   end
 
   private

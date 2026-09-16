@@ -11,7 +11,8 @@ Rails.application.routes.draw do
 
   resource :cart, only: [:show, :destroy]
   resources :cart_items, only: [:create, :update, :destroy]
-  resources :orders, only: [:new, :create, :show]
+  
+  resources :orders, only: [:index, :new, :create, :show]
 
   namespace :admin do
     resources :products
