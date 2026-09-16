@@ -1,0 +1,56 @@
+<%= form_with model: [:admin, product], class: "space-y-6" do |f| %>
+  <% if product.errors.any? %>
+    <div class="p-4 bg-rose-50 border-l-4 border-rose-600 text-rose-900 text-xs">
+      <p class="font-bold mb-1">Виправте наступні помилки:</p>
+      <ul class="list-disc list-inside space-y-0.5">
+        <% product.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <div>
+      <%= f.label :name, "Найменування товару", class: "block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1" %>
+      <%= f.text_field :name, required: true, class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3 py-2 text-sm text-zinc-900 focus:outline-none" %>
+    </div>
+
+    <div>
+      <%= f.label :sku, "Артикул / SKU", class: "block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1" %>
+      <%= f.text_field :sku, required: true, class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3 py-2 text-sm font-mono-num text-zinc-900 focus:outline-none" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+    <div>
+      <%= f.label :category_id, "Категорія", class: "block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1" %>
+      <%= f.collection_select :category_id, Category.order(:name), :id, :name, { prompt: "Оберіть категорію" }, { required: true, class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3 py-2 text-sm bg-white focus:outline-none" } %>
+    </div>
+
+    <div>
+      <%= f.label :price, "Ціна (грн)", class: "block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1" %>
+      <%= f.number_field :price, step: 0.01, min: 0, required: true, class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3 py-2 text-sm font-mono-num text-zinc-900 focus:outline-none" %>
+    </div>
+
+    <div>
+      <%= f.label :stock, "Кількість на складі (од.)", class: "block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1" %>
+      <%= f.number_field :stock, min: 0, required: true, class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3 py-2 text-sm font-mono-num text-zinc-900 focus:outline-none" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :description, "Технічний опис", class: "block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1" %>
+    <%= f.text_area :description, rows: 4, class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3 py-2 text-sm text-zinc-900 focus:outline-none" %>
+  </div>
+
+  <div>
+    <%= f.label :image, "Зображення товару", class: "block text-xs font-bold uppercase tracking-wider text-zinc-700 mb-1" %>
+    <%= f.file_field :image, accept: "image/*", class: "w-full text-xs text-zinc-500 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-xs file:font-bold file:uppercase file:bg-zinc-900 file:text-white hover:file:bg-zinc-800 cursor-pointer" %>
+  </div>
+
+  <div class="pt-4 border-t border-zinc-200 flex items-center justify-between">
+    <%= link_to "Скасувати", admin_products_path, class: "text-xs font-bold uppercase tracking-wider text-zinc-500 hover:text-zinc-900" %>
+    <%= f.submit product.new_record? ? "Створити товар" : "Зберегти зміни", class: "bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest px-6 py-3 transition cursor-pointer" %>
+  </div>
+<% end %>
