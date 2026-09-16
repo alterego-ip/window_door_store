@@ -8,6 +8,7 @@ class User < ApplicationRecord
 
   has_many :carts, dependent: :nullify
   has_many :orders, dependent: :nullify
+  has_many :reviews, dependent: :destroy
 
   def full_name
     "#{first_name} #{last_name}".strip

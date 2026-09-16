@@ -1,4 +1,5 @@
-<div class="max-w-5xl mx-auto space-y-6">
+<div class="max-w-5xl mx-auto space-y-8">
+  <!-- Навігаційний ланцюжок -->
   <div class="flex items-center gap-2 text-xs font-mono-num text-zinc-500 uppercase tracking-wider">
     <%= link_to "Каталог", products_path, class: "hover:text-zinc-900 transition" %>
     <span>/</span>
@@ -7,8 +8,8 @@
     <span class="text-zinc-900 font-bold"><%= @product.sku %></span>
   </div>
 
+  <!-- Головна картка виробу -->
   <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white border-2 border-zinc-200 p-6 sm:p-8">
-    <!-- Зображення або технічна заглушка -->
     <div class="h-80 sm:h-96 bg-zinc-100 border border-zinc-200 flex items-center justify-center p-6">
       <% if @product.image.attached? %>
         <%= image_tag @product.image, class: "w-full h-full object-contain" %>
@@ -21,7 +22,7 @@
 
     <div class="flex flex-col justify-between space-y-6">
       <div>
-        <div class="flex items-center gap-2 mb-2">
+        <div class="flex items-center justify-between mb-2">
           <span class="text-[10px] font-bold uppercase tracking-wider text-amber-700 bg-amber-50 border border-amber-200 px-2 py-0.5">
             <%= @product.category.name %>
           </span>
@@ -31,6 +32,17 @@
         <h1 class="text-2xl font-black uppercase tracking-tight text-zinc-900 leading-snug">
           <%= @product.name %>
         </h1>
+
+        <!-- Блок середньої оцінки -->
+        <div class="flex items-center gap-2 mt-2">
+          <div class="flex text-amber-500 text-sm">
+            <% (1..5).each do |star| %>
+              <span><%= star <= @product.average_rating.round ? "★" : "☆" %></span>
+            <% end %>
+          </div>
+          <span class="text-xs font-mono-num font-bold text-zinc-900"><%= @product.average_rating %> / 5.0</span>
+          <span class="text-xs text-zinc-400 font-mono-num">(<%= @product.reviews.count %> відгуків)</span>
+        </div>
 
         <div class="mt-4 pb-4 border-b border-zinc-200">
           <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-400 block mb-1">Ціна з урахуванням ПДВ</span>
@@ -46,14 +58,14 @@
           </p>
         </div>
 
-        <div class="mt-4 border-t border-zinc-100 pt-4 space-y-2 text-xs">
-          <div class="flex justify-between py-1 border-b border-zinc-100 font-mono-num">
+        <div class="mt-4 border-t border-zinc-100 pt-4 space-y-2 text-xs font-mono-num">
+          <div class="flex justify-between py-1 border-b border-zinc-100">
             <span class="text-zinc-500">Наявність на складі:</span>
             <span class="<%= @product.stock > 0 ? 'text-emerald-700 font-bold' : 'text-rose-600' %>">
-              <%= @product.stock > 0 ? "#{@product.stock} одиниць" : "Під індивідуальне замовлення" %>
+              <%= @product.stock > 0 ? "#{@product.stock} од." : "Під замовлення" %>
             </span>
           </div>
-          <div class="flex justify-between py-1 border-b border-zinc-100 font-mono-num">
+          <div class="flex justify-between py-1 border-b border-zinc-100">
             <span class="text-zinc-500">Гарантійний термін:</span>
             <span class="text-zinc-800 font-bold">5 років за стандартом ДСТУ</span>
           </div>
@@ -62,9 +74,83 @@
 
       <div class="pt-4 border-t border-zinc-200">
         <%= button_to cart_items_path(product_id: @product.id), method: :post, class: "w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest py-3.5 transition cursor-pointer text-center" do %>
-          Додати позицію до специфікації
+          Додати позицію до замовлення
         <% end %>
       </div>
+    </div>
+  </div>
+
+  <!-- Блок відгуків -->
+  <div class="bg-white border-2 border-zinc-200 p-6 sm:p-8 space-y-6">
+    <div class="border-b border-zinc-200 pb-4 flex flex-col sm:flex-row justify-between sm:items-center gap-2">
+      <div>
+        <span class="text-xs font-bold uppercase tracking-widest text-amber-600">Зворотний зв'язок</span>
+        <h2 class="text-xl font-black uppercase tracking-tight text-zinc-900">Відгуки клієнтів про виріб</h2>
+      </div>
+      <div class="text-xs font-mono-num text-zinc-500">
+        Загалом: <%= @product.reviews.count %> оцінок
+      </div>
+    </div>
+
+    <% if user_signed_in? %>
+      <% existing_review = @product.reviews.find_by(user: current_user) %>
+      <% if existing_review.present? %>
+        <div class="p-3 bg-zinc-50 border border-zinc-200 text-xs text-zinc-600">
+          Ви вже залишили свій відгук до цієї номенклатурної позиції.
+        </div>
+      <% else %>
+        <%= form_with model: [@product, Review.new], class: "bg-zinc-50 border border-zinc-200 p-5 space-y-4" do |f| %>
+          <h3 class="text-xs font-bold uppercase tracking-wider text-zinc-900">Залишити технічний відгук</h3>
+
+          <div class="flex items-center gap-4">
+            <%= f.label :rating, "Оцінка:", class: "text-xs font-bold uppercase tracking-wider text-zinc-700" %>
+            <%= f.select :rating, [["★★★★★ (5 - Відмінно)", 5], ["★★★★☆ (4 - Добре)", 4], ["★★★☆☆ (3 - Задовільно)", 3], ["★★☆☆☆ (2 - Посередньо)", 2], ["★☆☆☆☆ (1 - Не рекомендую)", 1]], {}, class: "border-2 border-zinc-200 bg-white text-xs font-mono-num p-2 focus:border-zinc-900 focus:outline-none" %>
+          </div>
+
+          <div>
+            <%= f.text_area :comment, rows: 3, placeholder: "Опишіть враження від експлуатації конструкції, монтажу чи герметичності...", required: true, class: "w-full border-2 border-zinc-200 focus:border-zinc-900 p-3 text-xs text-zinc-900 bg-white focus:outline-none" %>
+          </div>
+
+          <%= f.submit "Опублікувати відгук", class: "bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-bold uppercase tracking-wider px-5 py-2.5 transition cursor-pointer" %>
+        <% end %>
+      <% end %>
+    <% else %>
+      <div class="p-4 bg-zinc-50 border border-zinc-200 text-xs text-zinc-600 flex items-center justify-between">
+        <span>Щоб поділитися досвідом експлуатації, будь ласка, увійдіть у систему.</span>
+        <%= link_to "Авторизуватися", new_user_session_path, class: "font-bold underline uppercase tracking-wider text-zinc-900 hover:text-amber-600" %>
+      </div>
+    <% end %>
+
+    <div class="space-y-4 pt-2">
+      <% if @product.reviews.any? %>
+        <% @product.reviews.order(created_at: :desc).each do |review| %>
+          <div class="border border-zinc-200 p-4 space-y-2">
+            <div class="flex justify-between items-center text-xs">
+              <div class="flex items-center gap-2">
+                <span class="font-bold text-zinc-900"><%= review.user.full_name %></span>
+                <span class="text-amber-500 font-mono-num font-bold">
+                  <%= "★" * review.rating %><%= "☆" * (5 - review.rating) %>
+                </span>
+              </div>
+              <div class="flex items-center gap-3">
+                <span class="text-zinc-400 font-mono-num text-[11px]"><%= review.created_at.strftime("%d.%m.%Y") %></span>
+                <% if user_signed_in? && (review.user == current_user || current_user.admin?) %>
+                  <%= button_to product_review_path(@product, review), method: :delete, data: { turbo_confirm: "Видалити відгук?" }, class: "text-rose-600 hover:underline text-[10px] uppercase font-bold cursor-pointer bg-transparent border-0 p-0" do %>
+                    Видалити
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+            <p class="text-xs text-zinc-700 leading-relaxed font-normal">
+              <%= review.comment %>
+            </p>
+          </div>
+        <% end %>
+      <% else %>
+        <p class="text-xs text-zinc-400 font-mono-num py-4 text-center">
+          [ Поки немає жодного відгуку на цей виріб ]
+        </p>
+      <% end %>
     </div>
   </div>
 </div>

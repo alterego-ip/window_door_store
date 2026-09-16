@@ -3,7 +3,9 @@ Rails.application.routes.draw do
 
   root "products#index"
 
-  resources :products, only: [:index, :show]
+  resources :products, only: [:index, :show] do
+    resources :reviews, only: [:create, :destroy]
+  end
 
   resource :configurator, only: [:show, :create] do
     post :calculate, on: :collection
@@ -11,7 +13,6 @@ Rails.application.routes.draw do
 
   resource :cart, only: [:show, :destroy]
   resources :cart_items, only: [:create, :update, :destroy]
-  
   resources :orders, only: [:index, :new, :create, :show]
 
   namespace :admin do
