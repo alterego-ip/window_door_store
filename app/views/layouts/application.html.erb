@@ -54,6 +54,12 @@
             <nav class="hidden md:flex items-center gap-1">
               <%= link_to "Каталог продукції", products_path, class: "px-4 py-2 text-xs font-bold uppercase tracking-wider text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded transition" %>
               <%= link_to "Калькулятор вартості", configurator_path, class: "px-4 py-2 text-xs font-bold uppercase tracking-wider text-amber-700 bg-amber-50/80 border border-amber-200 hover:bg-amber-100 transition rounded" %>
+              <%= link_to cart_path, class: "flex items-center gap-2 px-3 py-2 text-xs font-bold uppercase tracking-wider text-zinc-800 border-2 border-zinc-200 hover:border-zinc-900 transition" do %>
+                <span>Кошик</span>
+                <span class="w-5 h-5 bg-zinc-900 text-white rounded-full flex items-center justify-center text-[10px] font-mono-num">
+                  <%= current_cart.total_items_count %>
+                </span>
+              <% end %>
             </nav>
           </div>
 
