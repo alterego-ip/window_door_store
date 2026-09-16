@@ -12,4 +12,12 @@ class Order < ApplicationRecord
     ["Безготівковий розрахунок за реквізитами IBAN", "bank_transfer"],
     ["Оплата картою онлайн (еквайринг)", "card"]
   ].freeze
+
+  def human_status
+    I18n.t("orders.statuses.#{status}", default: status.humanize)
+  end
+
+  def self.status_options_for_select
+    statuses.keys.map { |k| [I18n.t("orders.statuses.#{k}", default: k.humanize), k] }
+  end
 end

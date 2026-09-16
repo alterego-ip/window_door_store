@@ -1,34 +1,30 @@
 <div class="max-w-5xl mx-auto">
   <div class="mb-6 flex flex-col sm:flex-row sm:items-end justify-between border-b border-zinc-200 pb-4 gap-2">
     <div>
-      <span class="text-xs font-bold uppercase tracking-widest text-amber-600">Інженерний модуль розрахунку</span>
+      <span class="text-xs font-bold uppercase tracking-widest text-amber-600">Індивідуальне замовлення</span>
       <h1 class="text-2xl sm:text-3xl font-black text-zinc-900 uppercase tracking-tight">Параметричний конфігуратор вікон</h1>
-    </div>
-    <div class="text-xs text-zinc-500 font-mono-num">
-      Формула: S·K(скло) + P·K(профіль) + Фурнітура
     </div>
   </div>
 
   <%= form_with model: CustomConfiguration.new, url: configurator_path, method: :post, id: "config-form", class: "grid grid-cols-1 lg:grid-cols-3 gap-8 items-start" do |f| %>
     <%= f.hidden_field :product_type, value: "window" %>
 
-    <!-- Ліва частина: Параметри конструкції (2 колонки) -->
     <div class="lg:col-span-2 space-y-6">
-      <!-- Крок 1: Габарити отвору -->
-      <div class="bg-white border border-zinc-300/80 p-6 shadow-xs">
+      <!-- Габарити -->
+      <div class="bg-white border-2 border-zinc-200 p-6 shadow-xs">
         <div class="flex items-center justify-between pb-3 mb-4 border-b border-zinc-100">
           <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-900 flex items-center gap-2">
-            <span class="w-5 h-5 bg-zinc-900 text-white rounded-none flex items-center justify-center text-[10px]">01</span>
+            <span class="w-5 h-5 bg-zinc-900 text-white flex items-center justify-center text-[10px]">01</span>
             Габарити виробу (в міліметрах)
           </h2>
-          <span class="text-[11px] text-zinc-400 font-medium">Точність: ±10 мм</span>
+          <span class="text-[11px] text-zinc-400 font-medium">Діапазон: 400 – 3000 мм</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
           <div>
             <div class="flex justify-between items-center mb-1.5">
               <%= f.label :width, "Ширина конструкції", class: "text-xs font-bold text-zinc-700 uppercase tracking-wider" %>
-              <span class="text-[11px] font-mono-num text-zinc-500">400 – 3000 мм</span>
+              <span class="text-[11px] font-mono-num text-zinc-500">мін. 400 мм</span>
             </div>
             <div class="relative">
               <%= f.number_field :width, value: @default_params[:width], min: 400, max: 3000, step: 10, required: true, id: "calc-width", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3.5 py-2.5 text-zinc-900 font-mono-num font-bold text-base focus:outline-none transition" %>
@@ -39,7 +35,7 @@
           <div>
             <div class="flex justify-between items-center mb-1.5">
               <%= f.label :height, "Висота конструкції", class: "text-xs font-bold text-zinc-700 uppercase tracking-wider" %>
-              <span class="text-[11px] font-mono-num text-zinc-500">400 – 2800 мм</span>
+              <span class="text-[11px] font-mono-num text-zinc-500">мін. 400 мм</span>
             </div>
             <div class="relative">
               <%= f.number_field :height, value: @default_params[:height], min: 400, max: 2800, step: 10, required: true, id: "calc-height", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3.5 py-2.5 text-zinc-900 font-mono-num font-bold text-base focus:outline-none transition" %>
@@ -47,13 +43,14 @@
             </div>
           </div>
         </div>
+        <p id="dimension-warning" class="text-rose-600 text-xs font-bold mt-3 hidden">Габарити мають бути не менше 400 мм та не більше допустимих меж.</p>
       </div>
 
-      <!-- Крок 2: Комплектація матеріалів -->
-      <div class="bg-white border border-zinc-300/80 p-6 shadow-xs">
+      <!-- Матеріали -->
+      <div class="bg-white border-2 border-zinc-200 p-6 shadow-xs">
         <div class="flex items-center justify-between pb-3 mb-4 border-b border-zinc-100">
           <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-900 flex items-center gap-2">
-            <span class="w-5 h-5 bg-zinc-900 text-white rounded-none flex items-center justify-center text-[10px]">02</span>
+            <span class="w-5 h-5 bg-zinc-900 text-white flex items-center justify-center text-[10px]">02</span>
             Технічна специфікація та матеріали
           </h2>
         </div>
@@ -91,19 +88,19 @@
         </div>
       </div>
 
-      <!-- Крок 3: Послуга монтажу -->
+      <!-- Монтаж -->
       <div class="bg-zinc-50 border border-zinc-200 p-4 flex items-center justify-between">
         <div class="flex items-center gap-3">
           <%= f.check_box :with_installation, { checked: true, id: "calc-install", class: "w-4 h-4 text-zinc-900 border-zinc-300 rounded-none focus:ring-0 cursor-pointer" } %>
           <%= f.label :with_installation, "Включити професійний монтаж за стандартом ДСТУ", class: "text-xs font-bold uppercase tracking-wider text-zinc-800 cursor-pointer" %>
         </div>
-        <span class="text-xs font-mono-num font-bold text-amber-700 bg-amber-100/70 px-2 py-0.5">+20% до бази</span>
+        <span class="text-xs font-mono-num font-bold text-amber-700 bg-amber-100/70 px-2 py-0.5">+20% до вартості</span>
       </div>
     </div>
 
-    <!-- Права частина: Панель результату та чекауту -->
+    <!-- Блок підсумку -->
     <div class="bg-zinc-900 text-white p-6 border-t-4 border-amber-500 shadow-lg sticky top-24">
-      <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-400 block mb-1">Підсумок специфікації</span>
+      <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-400 block mb-1">Попередня специфікація</span>
       <h3 class="text-sm font-bold uppercase tracking-wider text-zinc-200 pb-3 border-b border-zinc-800 mb-6">Калькуляція вартості</h3>
 
       <div class="space-y-3 text-xs mb-8">
@@ -128,11 +125,7 @@
         </div>
       </div>
 
-      <%= f.submit "Зберегти розрахунок", class: "w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest py-4 rounded-none transition duration-150 cursor-pointer text-center block" %>
-
-      <p class="text-[10px] text-zinc-500 text-center mt-4">
-        Параметри зберігаються у форматі JSONB для подальшого додавання в замовлення
-      </p>
+      <%= f.submit "Зберегти розрахунок у кошик", id: "submit-btn", class: "w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest py-4 rounded-none transition duration-150 cursor-pointer text-center block" %>
     </div>
   <% end %>
 </div>
@@ -140,29 +133,51 @@
 <script>
   (function initCalculator() {
     function setupEvents() {
-      const inputs = ["calc-width", "calc-height", "calc-profile", "calc-glass", "calc-hardware", "calc-install"];
+      const wEl = document.getElementById("calc-width");
+      const hEl = document.getElementById("calc-height");
       const priceDisplay = document.getElementById("price-display");
       const summaryArea = document.getElementById("summary-area");
       const summaryPerimeter = document.getElementById("summary-perimeter");
+      const warning = document.getElementById("dimension-warning");
+      const submitBtn = document.getElementById("submit-btn");
 
       if (!priceDisplay) return;
 
       function updateGeometry() {
-        const w = parseFloat(document.getElementById("calc-width")?.value) || 0;
-        const h = parseFloat(document.getElementById("calc-height")?.value) || 0;
-        const area = (w * h) / 1000000;
-        const perimeter = (2 * (w + h)) / 1000;
-        if (summaryArea) summaryArea.textContent = area.toFixed(2) + " м²";
-        if (summaryPerimeter) summaryPerimeter.textContent = perimeter.toFixed(2) + " м";
+        const w = parseFloat(wEl?.value) || 0;
+        const h = parseFloat(hEl?.value) || 0;
+
+        if (w < 400 || h < 400 || w > 3000 || h > 2800) {
+          if (warning) warning.classList.remove("hidden");
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.classList.add("opacity-50", "cursor-not-allowed");
+          }
+          if (summaryArea) summaryArea.textContent = "—";
+          if (summaryPerimeter) summaryPerimeter.textContent = "—";
+          priceDisplay.textContent = "0.00 грн";
+          return false;
+        } else {
+          if (warning) warning.classList.add("hidden");
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove("opacity-50", "cursor-not-allowed");
+          }
+          const area = (w * h) / 1000000;
+          const perimeter = (2 * (w + h)) / 1000;
+          if (summaryArea) summaryArea.textContent = area.toFixed(2) + " м²";
+          if (summaryPerimeter) summaryPerimeter.textContent = perimeter.toFixed(2) + " м";
+          return true;
+        }
       }
 
       function fetchUpdatedPrice() {
-        updateGeometry();
+        if (!updateGeometry()) return;
 
         const token = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content");
         const data = {
-          width: document.getElementById("calc-width")?.value,
-          height: document.getElementById("calc-height")?.value,
+          width: wEl.value,
+          height: hEl.value,
           profile_system: document.getElementById("calc-profile")?.value,
           glass_type: document.getElementById("calc-glass")?.value,
           hardware: document.getElementById("calc-hardware")?.value,
@@ -178,22 +193,16 @@
           },
           body: JSON.stringify(data)
         })
-        .then(response => {
-          if (!response.ok) throw new Error("HTTP error " + response.status);
-          return response.json();
-        })
+        .then(r => r.json())
         .then(res => {
           if (res.price !== undefined && priceDisplay) {
-            priceDisplay.textContent = Number(res.price).toLocaleString("uk-UA", { 
-              minimumFractionDigits: 2, 
-              maximumFractionDigits: 2 
-            }) + " грн";
+            priceDisplay.textContent = Number(res.price).toLocaleString("uk-UA", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + " грн";
           }
         })
-        .catch(err => console.error("Calculator Fetch Error:", err));
+        .catch(err => console.error("Calc error:", err));
       }
 
-      inputs.forEach(id => {
+      ["calc-width", "calc-height", "calc-profile", "calc-glass", "calc-hardware", "calc-install"].forEach(id => {
         const el = document.getElementById(id);
         if (el) {
           el.oninput = fetchUpdatedPrice;
