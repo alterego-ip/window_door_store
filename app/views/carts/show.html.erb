@@ -1,105 +1,97 @@
-<div class="max-w-5xl mx-auto">
-  <div class="mb-6 flex flex-col sm:flex-row sm:items-end justify-between border-b border-zinc-200 pb-4 gap-2">
+<div class="max-w-5xl mx-auto space-y-6">
+  <div class="flex flex-col sm:flex-row sm:items-end justify-between border-b border-zinc-200 pb-4 gap-2">
     <div>
-      <span class="text-xs font-bold uppercase tracking-widest text-amber-600">Комплектація замовлення</span>
-      <h1 class="text-2xl sm:text-3xl font-black text-zinc-900 uppercase tracking-tight">Специфікація кошика</h1>
+      <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-amber-600">Комплектація замовлення</span>
+      <h1 class="text-xl sm:text-3xl font-black text-zinc-900 uppercase tracking-tight">Специфікація кошика</h1>
     </div>
     <% if @cart.cart_items.any? %>
-      <%= button_to "Очистити все", cart_path, method: :delete, data: { turbo_confirm: "Очистити весь кошик?" }, class: "text-xs font-mono-num font-bold text-zinc-400 hover:text-rose-600 uppercase tracking-wider underline cursor-pointer" %>
+      <%= button_to "Очистити все", cart_path, method: :delete, data: { turbo_confirm: "Очистити весь кошик?" }, class: "text-xs font-mono-num font-bold text-zinc-400 hover:text-rose-600 uppercase tracking-wider underline cursor-pointer text-left" %>
     <% end %>
   </div>
 
   <% if @cart.cart_items.any? %>
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start">
       <!-- Список позицій -->
-      <div class="lg:col-span-2 space-y-4">
+      <div class="lg:col-span-2 space-y-3 sm:space-y-4">
         <% @cart.cart_items.order(:created_at).each do |item| %>
-          <div class="bg-white border-2 border-zinc-200 p-5 flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+          <div class="bg-white border-2 border-zinc-200 p-4 sm:p-5 flex flex-col gap-4">
             <div class="space-y-1">
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 <%= item.product ? 'bg-zinc-100 text-zinc-800' : 'bg-amber-100 text-amber-800' %>">
-                  <%= item.product ? "Складська позиція" : "Індивідуальний розрахунок" %>
+              <div class="flex items-center justify-between">
+                <span class="text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 <%= item.product ? 'bg-zinc-100 text-zinc-800' : 'bg-amber-100 text-amber-800' %>">
+                  <%= item.product ? "Склад" : "Калькулятор" %>
                 </span>
+                <!-- Кнопка вилучення для мобільних справа вгорі -->
+                <%= button_to cart_item_path(item), method: :delete, class: "text-zinc-400 hover:text-rose-600 text-sm font-bold cursor-pointer p-1" do %>
+                  ✕
+                <% end %>
               </div>
-              <h3 class="text-base font-bold text-zinc-900 leading-snug"><%= item.item_title %></h3>
+
+              <h3 class="text-sm sm:text-base font-bold text-zinc-900 leading-snug"><%= item.item_title %></h3>
 
               <% if item.custom_configuration %>
-                <p class="text-xs text-zinc-500 font-mono-num">
-                  Профіль: <%= item.custom_configuration.profile_system.upcase %> |
-                  Скло: <%= item.custom_configuration.glass_type %> |
-                  Монтаж: <%= item.custom_configuration.with_installation ? "Так (+20%)" : "Ні" %>
+                <p class="text-[11px] text-zinc-500 font-mono-num">
+                  <%= item.custom_configuration.profile_system.upcase %> | <%= item.custom_configuration.glass_type %> | Монтаж: <%= item.custom_configuration.with_installation ? "Так" : "Ні" %>
                 </p>
               <% end %>
 
-              <div class="text-xs text-zinc-400 font-mono-num pt-1">
-                Ціна за од.: <%= number_to_currency(item.unit_price, unit: "грн", format: "%n %u") %>
+              <div class="text-xs text-zinc-400 font-mono-num">
+                <%= number_to_currency(item.unit_price, unit: "грн", format: "%n %u") %> / од.
               </div>
             </div>
 
-            <div class="flex items-center justify-between sm:justify-end gap-6 border-t sm:border-t-0 pt-3 sm:pt-0 border-zinc-100">
-              <!-- Перемикач кількості - / + -->
+            <!-- Нижня смужка рядка: к-сть та сума -->
+            <div class="flex items-center justify-between border-t border-zinc-100 pt-3">
               <div class="flex items-center border-2 border-zinc-200 bg-zinc-50">
-                <%= button_to cart_item_path(item, delta: -1), method: :patch, class: "w-8 h-8 flex items-center justify-center font-bold text-zinc-600 hover:bg-zinc-200 transition cursor-pointer" do %>
+                <%= button_to cart_item_path(item, delta: -1), method: :patch, class: "w-8 h-8 flex items-center justify-center font-bold text-zinc-700 hover:bg-zinc-200 transition cursor-pointer" do %>
                   −
                 <% end %>
 
-                <span class="w-10 text-center font-mono-num text-xs font-black text-zinc-900">
+                <span class="w-8 text-center font-mono-num text-xs font-black text-zinc-900">
                   <%= item.quantity %>
                 </span>
 
-                <%= button_to cart_item_path(item, delta: 1), method: :patch, class: "w-8 h-8 flex items-center justify-center font-bold text-zinc-600 hover:bg-zinc-200 transition cursor-pointer" do %>
+                <%= button_to cart_item_path(item, delta: 1), method: :patch, class: "w-8 h-8 flex items-center justify-center font-bold text-zinc-700 hover:bg-zinc-200 transition cursor-pointer" do %>
                   +
                 <% end %>
               </div>
 
-              <!-- Вартість рядка -->
-              <div class="text-right min-w-[110px]">
-                <div class="text-base font-black font-mono-num text-zinc-900">
+              <div class="text-right">
+                <span class="text-xs text-zinc-400 block sm:hidden">Сума:</span>
+                <span class="text-base sm:text-lg font-black font-mono-num text-zinc-900">
                   <%= number_to_currency(item.total_price, unit: "грн", format: "%n %u") %>
-                </div>
+                </span>
               </div>
-
-              <!-- Видалення -->
-              <%= button_to cart_item_path(item), method: :delete, class: "text-zinc-400 hover:text-rose-600 text-sm font-bold cursor-pointer p-1" do %>
-                ✕
-              <% end %>
             </div>
           </div>
         <% end %>
       </div>
 
-      <!-- Підсумковий блок чекауту -->
-      <div class="bg-zinc-900 text-white p-6 border-t-4 border-amber-500 shadow-lg sticky top-24">
-        <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-400 block mb-1">Разом за специфікацією</span>
-        <h3 class="text-sm font-bold uppercase tracking-wider text-zinc-200 pb-3 border-b border-zinc-800 mb-6">Фінансовий підсумок</h3>
+      <!-- Фінансовий підсумок -->
+      <div class="bg-zinc-900 text-white p-5 sm:p-6 border-t-4 border-amber-500 shadow-lg lg:sticky lg:top-24">
+        <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-400 block mb-1">Специфікація</span>
+        <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-200 pb-3 border-b border-zinc-800 mb-4">Підсумок замовлення</h3>
 
-        <div class="space-y-3 text-xs mb-8">
-          <div class="flex justify-between py-1 border-b border-zinc-800/80">
-            <span class="text-zinc-400">Всього одиниць:</span>
-            <span class="font-mono-num font-bold text-zinc-200"><%= @cart.total_items_count %> шт.</span>
-          </div>
-          <div class="flex justify-between py-1 border-b border-zinc-800/80">
-            <span class="text-zinc-400">ПДВ (20%):</span>
-            <span class="text-zinc-300 font-mono-num">Включено</span>
-          </div>
+        <div class="flex justify-between py-2 border-b border-zinc-800 text-xs">
+          <span class="text-zinc-400">Всього одиниць:</span>
+          <span class="font-mono-num font-bold text-zinc-200"><%= @cart.total_items_count %> шт.</span>
         </div>
 
-        <div class="mb-8">
-          <span class="text-[11px] uppercase tracking-widest text-amber-400 font-bold block mb-1">Загальна сума:</span>
-          <div class="text-3xl font-black font-mono-num text-white tracking-tight">
+        <div class="my-6">
+          <span class="text-[11px] uppercase tracking-widest text-amber-400 font-bold block mb-1">Загальна вартість:</span>
+          <div class="text-2xl sm:text-3xl font-black font-mono-num text-white">
             <%= number_to_currency(@cart.total_price, unit: "грн", format: "%n %u") %>
           </div>
         </div>
 
-        <%= link_to "Оформити замовлення", new_order_path, class: "w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest py-4 rounded-none transition duration-150 cursor-pointer text-center block" %>
+        <%= link_to "Оформити замовлення", new_order_path, class: "w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest py-3.5 transition cursor-pointer text-center block" %>
       </div>
     </div>
   <% else %>
-    <div class="bg-white border-2 border-zinc-200 p-12 text-center">
-      <p class="text-sm font-bold uppercase tracking-wider text-zinc-500 mb-4">Кошик порожній</p>
-      <div class="flex justify-center gap-4">
-        <%= link_to "Перейти до каталогу", products_path, class: "bg-zinc-900 text-white text-xs font-bold uppercase tracking-wider px-4 py-2.5 hover:bg-zinc-800 transition" %>
-        <%= link_to "Онлайн-калькулятор", configurator_path, class: "border-2 border-zinc-900 text-zinc-900 text-xs font-bold uppercase tracking-wider px-4 py-2 hover:bg-zinc-900 hover:text-white transition" %>
+    <div class="bg-white border-2 border-zinc-200 p-8 sm:p-12 text-center space-y-4">
+      <p class="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-500">Кошик порожній</p>
+      <div class="flex flex-col sm:flex-row justify-center gap-3">
+        <%= link_to "Каталог продукції", products_path, class: "bg-zinc-900 text-white text-xs font-bold uppercase tracking-wider py-2.5 px-4" %>
+        <%= link_to "Онлайн-калькулятор", configurator_path, class: "border-2 border-zinc-900 text-zinc-900 text-xs font-bold uppercase tracking-wider py-2 px-4" %>
       </div>
     </div>
   <% end %>

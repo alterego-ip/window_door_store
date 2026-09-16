@@ -1,131 +1,115 @@
-<div class="max-w-5xl mx-auto">
-  <div class="mb-6 flex flex-col sm:flex-row sm:items-end justify-between border-b border-zinc-200 pb-4 gap-2">
-    <div>
-      <span class="text-xs font-bold uppercase tracking-widest text-amber-600">Індивідуальне замовлення</span>
-      <h1 class="text-2xl sm:text-3xl font-black text-zinc-900 uppercase tracking-tight">Параметричний конфігуратор вікон</h1>
-    </div>
+<div class="max-w-5xl mx-auto space-y-6">
+  <div class="border-b border-zinc-200 pb-4">
+    <span class="text-[10px] sm:text-xs font-bold uppercase tracking-widest text-amber-600">Індивідуальне виробництво</span>
+    <h1 class="text-xl sm:text-3xl font-black text-zinc-900 uppercase tracking-tight">Параметричний конфігуратор</h1>
   </div>
 
-  <%= form_with model: CustomConfiguration.new, url: configurator_path, method: :post, id: "config-form", class: "grid grid-cols-1 lg:grid-cols-3 gap-8 items-start" do |f| %>
+  <%= form_with model: CustomConfiguration.new, url: configurator_path, method: :post, id: "config-form", class: "grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8 items-start" do |f| %>
     <%= f.hidden_field :product_type, value: "window" %>
 
-    <div class="lg:col-span-2 space-y-6">
+    <div class="lg:col-span-2 space-y-4 sm:space-y-6">
       <!-- Габарити -->
-      <div class="bg-white border-2 border-zinc-200 p-6 shadow-xs">
-        <div class="flex items-center justify-between pb-3 mb-4 border-b border-zinc-100">
+      <div class="bg-white border-2 border-zinc-200 p-4 sm:p-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between pb-2 mb-4 border-b border-zinc-100 gap-1">
           <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-900 flex items-center gap-2">
             <span class="w-5 h-5 bg-zinc-900 text-white flex items-center justify-center text-[10px]">01</span>
-            Габарити виробу (в міліметрах)
+            Габарити вікна (мм)
           </h2>
-          <span class="text-[11px] text-zinc-400 font-medium">Діапазон: 400 – 3000 мм</span>
+          <span class="text-[10px] sm:text-[11px] text-zinc-400 font-mono-num">Межі: 400 – 3000 мм</span>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <div class="flex justify-between items-center mb-1.5">
-              <%= f.label :width, "Ширина конструкції", class: "text-xs font-bold text-zinc-700 uppercase tracking-wider" %>
-              <span class="text-[11px] font-mono-num text-zinc-500">мін. 400 мм</span>
-            </div>
+            <%= f.label :width, "Ширина", class: "block text-[11px] font-bold text-zinc-700 uppercase mb-1" %>
             <div class="relative">
-              <%= f.number_field :width, value: @default_params[:width], min: 400, max: 3000, step: 10, required: true, id: "calc-width", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3.5 py-2.5 text-zinc-900 font-mono-num font-bold text-base focus:outline-none transition" %>
-              <span class="absolute right-3.5 top-3 text-xs font-bold text-zinc-400">мм</span>
+              <%= f.number_field :width, value: @default_params[:width], min: 400, max: 3000, step: 10, required: true, id: "calc-width", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3 py-2 text-zinc-900 font-mono-num font-bold text-base focus:outline-none" %>
+              <span class="absolute right-3 top-2.5 text-xs font-bold text-zinc-400">мм</span>
             </div>
           </div>
 
           <div>
-            <div class="flex justify-between items-center mb-1.5">
-              <%= f.label :height, "Висота конструкції", class: "text-xs font-bold text-zinc-700 uppercase tracking-wider" %>
-              <span class="text-[11px] font-mono-num text-zinc-500">мін. 400 мм</span>
-            </div>
+            <%= f.label :height, "Висота", class: "block text-[11px] font-bold text-zinc-700 uppercase mb-1" %>
             <div class="relative">
-              <%= f.number_field :height, value: @default_params[:height], min: 400, max: 2800, step: 10, required: true, id: "calc-height", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3.5 py-2.5 text-zinc-900 font-mono-num font-bold text-base focus:outline-none transition" %>
-              <span class="absolute right-3.5 top-3 text-xs font-bold text-zinc-400">мм</span>
+              <%= f.number_field :height, value: @default_params[:height], min: 400, max: 2800, step: 10, required: true, id: "calc-height", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3 py-2 text-zinc-900 font-mono-num font-bold text-base focus:outline-none" %>
+              <span class="absolute right-3 top-2.5 text-xs font-bold text-zinc-400">мм</span>
             </div>
           </div>
         </div>
-        <p id="dimension-warning" class="text-rose-600 text-xs font-bold mt-3 hidden">Габарити мають бути не менше 400 мм та не більше допустимих меж.</p>
+        <p id="dimension-warning" class="text-rose-600 text-xs font-bold mt-2 hidden">Введіть габарити від 400 мм до 3000 мм.</p>
       </div>
 
       <!-- Матеріали -->
-      <div class="bg-white border-2 border-zinc-200 p-6 shadow-xs">
-        <div class="flex items-center justify-between pb-3 mb-4 border-b border-zinc-100">
-          <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-900 flex items-center gap-2">
-            <span class="w-5 h-5 bg-zinc-900 text-white flex items-center justify-center text-[10px]">02</span>
-            Технічна специфікація та матеріали
-          </h2>
+      <div class="bg-white border-2 border-zinc-200 p-4 sm:p-6 space-y-4">
+        <h2 class="text-xs font-bold uppercase tracking-widest text-zinc-900 pb-2 border-b border-zinc-100 flex items-center gap-2">
+          <span class="w-5 h-5 bg-zinc-900 text-white flex items-center justify-center text-[10px]">02</span>
+          Комплектація та склопакет
+        </h2>
+
+        <div>
+          <%= f.label :profile_system, "Профільна система", class: "block text-[11px] font-bold text-zinc-700 uppercase mb-1" %>
+          <%= f.select :profile_system, [
+            ["Rehau Euro 70 (5 камер, 70 мм)", "rehau_70"],
+            ["Rehau Euro 60 (3 камери)", "rehau_60"],
+            ["Salamander bluEvolution (82 мм, преміум)", "salamander"],
+            ["WDS 500 Classic (5 камер)", "wds_500"]
+          ], { selected: @default_params[:profile_system] }, id: "calc-profile", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 p-2 text-xs bg-white focus:outline-none" %>
         </div>
 
-        <div class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <%= f.label :profile_system, "Профільна система", class: "block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1.5" %>
-            <%= f.select :profile_system, [
-              ["Rehau Euro 70 (5 камер, 70 мм монтажна глибина)", "rehau_70"],
-              ["Rehau Euro 60 (3 камери, базова ізоляція)", "rehau_60"],
-              ["Salamander bluEvolution (6 камер, 82 мм, преміум)", "salamander"],
-              ["WDS 500 Classic (Україна, 5 камер)", "wds_500"]
-            ], { selected: @default_params[:profile_system] }, id: "calc-profile", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3 py-2.5 text-sm bg-white font-medium focus:outline-none transition" %>
+            <%= f.label :glass_type, "Формула скла", class: "block text-[11px] font-bold text-zinc-700 uppercase mb-1" %>
+            <%= f.select :glass_type, [
+              ["Двокамерний (4-10-4-10-4)", "double"],
+              ["Енергоощадний (з аргоном)", "energy_saver"],
+              ["Однокамерний (4-16-4)", "single"]
+            ], { selected: @default_params[:glass_type] }, id: "calc-glass", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 p-2 text-xs bg-white focus:outline-none" %>
           </div>
 
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <%= f.label :glass_type, "Формула склопакета", class: "block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1.5" %>
-              <%= f.select :glass_type, [
-                ["Двокамерний (4-10-4-10-4)", "double"],
-                ["Енергоощадний (4-14Ar-4-14Ar-4i)", "energy_saver"],
-                ["Однокамерний базовий (4-16-4)", "single"]
-              ], { selected: @default_params[:glass_type] }, id: "calc-glass", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3 py-2.5 text-sm bg-white font-medium focus:outline-none transition" %>
-            </div>
-
-            <div>
-              <%= f.label :hardware, "Механізм фурнітури", class: "block text-xs font-bold text-zinc-700 uppercase tracking-wider mb-1.5" %>
-              <%= f.select :hardware, [
-                ["Siegenia Titan AF (Німеччина)", "siegenia"],
-                ["Roto NX (Німеччина)", "roto"],
-                ["Axor Komfort Line K-3", "axor"]
-              ], { selected: @default_params[:hardware] }, id: "calc-hardware", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 px-3 py-2.5 text-sm bg-white font-medium focus:outline-none transition" %>
-            </div>
+          <div>
+            <%= f.label :hardware, "Фурнітура", class: "block text-[11px] font-bold text-zinc-700 uppercase mb-1" %>
+            <%= f.select :hardware, [
+              ["Siegenia Titan AF (Німеччина)", "siegenia"],
+              ["Roto NX (Німеччина)", "roto"],
+              ["Axor Komfort Line", "axor"]
+            ], { selected: @default_params[:hardware] }, id: "calc-hardware", class: "w-full border-2 border-zinc-200 focus:border-zinc-900 p-2 text-xs bg-white focus:outline-none" %>
           </div>
         </div>
       </div>
 
       <!-- Монтаж -->
-      <div class="bg-zinc-50 border border-zinc-200 p-4 flex items-center justify-between">
-        <div class="flex items-center gap-3">
-          <%= f.check_box :with_installation, { checked: true, id: "calc-install", class: "w-4 h-4 text-zinc-900 border-zinc-300 rounded-none focus:ring-0 cursor-pointer" } %>
-          <%= f.label :with_installation, "Включити професійний монтаж за стандартом ДСТУ", class: "text-xs font-bold uppercase tracking-wider text-zinc-800 cursor-pointer" %>
+      <div class="bg-zinc-50 border border-zinc-200 p-4 flex items-center justify-between gap-2">
+        <div class="flex items-center gap-2.5">
+          <%= f.check_box :with_installation, { checked: true, id: "calc-install", class: "w-4 h-4 text-zinc-900 rounded-none focus:ring-0" } %>
+          <%= f.label :with_installation, "Монтаж за ДСТУ", class: "text-xs font-bold uppercase text-zinc-800 cursor-pointer" %>
         </div>
-        <span class="text-xs font-mono-num font-bold text-amber-700 bg-amber-100/70 px-2 py-0.5">+20% до вартості</span>
+        <span class="text-[11px] font-mono-num font-bold text-amber-700 bg-amber-100 px-2 py-0.5 shrink-0">+20%</span>
       </div>
     </div>
 
-    <!-- Блок підсумку -->
-    <div class="bg-zinc-900 text-white p-6 border-t-4 border-amber-500 shadow-lg sticky top-24">
-      <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-400 block mb-1">Попередня специфікація</span>
-      <h3 class="text-sm font-bold uppercase tracking-wider text-zinc-200 pb-3 border-b border-zinc-800 mb-6">Калькуляція вартості</h3>
+    <!-- Підсумок (на десктопі залишається sticky) -->
+    <div class="bg-zinc-900 text-white p-5 sm:p-6 border-t-4 border-amber-500 shadow-lg lg:sticky lg:top-24">
+      <span class="text-[10px] uppercase font-bold tracking-widest text-zinc-400 block mb-1">Розрахунок</span>
+      <h3 class="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-200 pb-3 border-b border-zinc-800 mb-4">Попередня вартість</h3>
 
-      <div class="space-y-3 text-xs mb-8">
-        <div class="flex justify-between py-1 border-b border-zinc-800/80">
-          <span class="text-zinc-400">Розрахункова площа:</span>
+      <div class="space-y-2 text-xs mb-6">
+        <div class="flex justify-between border-b border-zinc-800 pb-1">
+          <span class="text-zinc-400">Площа виробу:</span>
           <span id="summary-area" class="font-mono-num font-bold text-zinc-200">1.82 м²</span>
         </div>
-        <div class="flex justify-between py-1 border-b border-zinc-800/80">
-          <span class="text-zinc-400">Периметр конструкції:</span>
+        <div class="flex justify-between border-b border-zinc-800 pb-1">
+          <span class="text-zinc-400">Периметр:</span>
           <span id="summary-perimeter" class="font-mono-num font-bold text-zinc-200">5.40 м</span>
-        </div>
-        <div class="flex justify-between py-1 border-b border-zinc-800/80">
-          <span class="text-zinc-400">ПДВ (20%):</span>
-          <span class="text-zinc-300 font-mono-num">Включено</span>
         </div>
       </div>
 
-      <div class="mb-8">
-        <span class="text-[11px] uppercase tracking-widest text-amber-400 font-bold block mb-1">Разом до сплати:</span>
-        <div id="price-display" class="text-3xl sm:text-4xl font-black font-mono-num text-white tracking-tight">
+      <div class="mb-6">
+        <span class="text-[11px] uppercase tracking-widest text-amber-400 font-bold block mb-1">До сплати з ПДВ:</span>
+        <div id="price-display" class="text-2xl sm:text-3xl font-black font-mono-num text-white">
           <%= number_to_currency(@initial_price, unit: "грн", format: "%n %u") %>
         </div>
       </div>
 
-      <%= f.submit "Зберегти розрахунок у кошик", id: "submit-btn", class: "w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest py-4 rounded-none transition duration-150 cursor-pointer text-center block" %>
+      <%= f.submit "Додати в кошик", id: "submit-btn", class: "w-full bg-amber-600 hover:bg-amber-500 text-white text-xs font-bold uppercase tracking-widest py-3.5 transition cursor-pointer text-center block" %>
     </div>
   <% end %>
 </div>
