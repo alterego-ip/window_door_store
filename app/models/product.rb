@@ -1,18 +1,11 @@
 class Product < ApplicationRecord
   belongs_to :category
   has_one_attached :image
+  has_many :cart_items, dependent: :destroy
+  has_many :order_items, dependent: :nullify
 
-  validates :name, :sku, :price, :stock, presence: true
-  validates :price, numericality: { greater_than_or_equal_to: 0 }
-  validates :stock, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :sku, uniqueness: true
-
-  scope :by_category, ->(category_id) { where(category_id: category_id) if category_id.present? }
-  scope :by_price, ->(min, max) {
-    scoped = all
-    scoped = scoped.where("price >= ?", min) if min.present?
-    scoped = scoped.where("price <= ?", max) if max.present?
-    scoped
-  }
-  scope :in_stock, -> { where("stock > 0") }
+  validates :name, :sku, presence: { message: "не може бути порожнім" }
+  validates :sku, uniqueness: { message: "із таким артикулом уже існує в базі" }
+  validates :price, numericality: { greater_than: 0, message: "має бути строго більшою за 0 грн" }
+  validates :stock, numericality: { only_integer: true, greater_than: 0, message: "має бути не менше 1 шт." }
 end

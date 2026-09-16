@@ -1,15 +1,15 @@
 class WindowPriceCalculator
   PROFILE_RATES = {
-    "rehau_60"     => 750.0, 
+    "rehau_60"     => 750.0,
     "rehau_70"     => 1100.0,
-    "salamander"   => 1350.0, 
-    "wds_500"      => 650.0  
+    "salamander"   => 1350.0,
+    "wds_500"      => 650.0
   }.freeze
 
   GLASS_RATES = {
-    "single"       => 800.0, 
-    "double"       => 1250.0, 
-    "energy_saver" => 1600.0 
+    "single"       => 800.0,
+    "double"       => 1250.0,
+    "energy_saver" => 1600.0
   }.freeze
 
   HARDWARE_RATES = {
@@ -34,6 +34,9 @@ class WindowPriceCalculator
   end
 
   def calculate
+    # Сувора інженерна валідація мінімальних габаритів
+    return 0.0 if @width < 400 || @height < 400 || @width > 3000 || @height > 2800
+
     area = (@width * @height) / 1_000_000.0
     perimeter = (2 * (@width + @height)) / 1_000.0
 
