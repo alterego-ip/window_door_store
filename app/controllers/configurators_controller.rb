@@ -28,7 +28,12 @@ class ConfiguratorsController < ApplicationController
     }
 
     if @config.save
-      redirect_to configurator_path, notice: "Конфігурацію успішно збережено! Вартість: #{@config.calculated_price} грн"
+      current_cart.cart_items.create!(
+        custom_configuration: @config,
+        unit_price: @config.calculated_price,
+        quantity: 1
+      )
+      redirect_to cart_path, notice: "Конфігурацію розраховано та додано до кошика!"
     else
       redirect_to configurator_path, alert: "Помилка при розрахунку: перевірте введені габарити."
     end

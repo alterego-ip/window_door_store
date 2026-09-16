@@ -9,6 +9,9 @@ Rails.application.routes.draw do
     post :calculate, on: :collection
   end
 
+  resource :cart, only: [:show, :destroy]
+  resources :cart_items, only: [:create, :update, :destroy]
+
   namespace :admin do
     resources :products
   end
